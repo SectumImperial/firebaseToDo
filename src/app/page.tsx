@@ -1,10 +1,10 @@
 import styles from './page.module.scss'
-import { ToDo } from '../components/ToDo'
+import { ToDoList } from '@/components/ToDoList/ToDoList'
 
 export default function Home() {
   return (
     <main className={styles.main}>
-      <ToDo />
+      <ToDoList />
     </main>
   )
 }
