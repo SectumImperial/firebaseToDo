@@ -8,6 +8,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  cursor: pointer;
+
+  &.completed {
+    text-decoration: line-through;
+  }
+
+  &.important {
+    color: red;
+  }
 }
 
 .addButton {

@@ -7,6 +7,7 @@ interface ToDoItem {
   id: string
   text: string
   completed: boolean
+  important: boolean
   createdAt: Date
 }
 
@@ -15,30 +16,11 @@ interface ToDoState {
   inputText: string
 }
 
-function timeSince(date: Date) {
-  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
-
-  let interval = seconds / 31536000
-  if (interval > 1) {
-    return Math.floor(interval) + ' years'
+export class ToDoListType extends Component<{}, ToDoState> {
+  state: ToDoState = {
+    toDoItems: [],
+    inputText: '',
   }
-  interval = seconds / 2592000
-  if (interval > 1) {
-    return Math.floor(interval) + ' months'
-  }
-  interval = seconds / 86400
-  if (interval > 1) {
-    return Math.floor(interval) + ' days'
-  }
-  interval = seconds / 3600
-  if (interval > 1) {
-    return Math.floor(interval) + ' hours'
-  }
-  interval = seconds / 60
-  if (interval > 1) {
-    return Math.floor(interval) + ' minutes'
-  }
-  return Math.floor(seconds) + ' seconds'
 }
 
 export class ToDoList extends Component<{}, ToDoState> {
@@ -57,6 +39,7 @@ export class ToDoList extends Component<{}, ToDoState> {
       text: this.state.inputText,
       completed: false,
       createdAt: new Date(),
+      important: false,
     }
     this.setState((prevState) => ({
       toDoItems: [...prevState.toDoItems, newItem],
@@ -67,6 +50,21 @@ export class ToDoList extends Component<{}, ToDoState> {
   deleteTodo = (id: number) => {
     this.setState((prevState) => ({
       toDoItems: prevState.toDoItems.filter((item) => Number(item.id) !== Number(id)),
+    }))
+  }
+  toggleComplete = (id: string) => {
+    this.setState((prevState) => ({
+      toDoItems: prevState.toDoItems.map((item) =>
+        item.id === id ? { ...item, completed: !item.completed } : item,
+      ),
+    }))
+  }
+
+  toggleImportant = (id: string) => {
+    this.setState((prevState) => ({
+      toDoItems: prevState.toDoItems.map((item) =>
+        item.id === id ? { ...item, important: !item.important } : item,
+      ),
     }))
   }
 
@@ -86,9 +84,12 @@ export class ToDoList extends Component<{}, ToDoState> {
         </div>
         <ul className={styles.todoList}>
           {this.state.toDoItems.map((item) => (
-            <li key={item.id} className={styles.todoItem}>
-              {item.text}
-              <TimeAgo timestamp={item.createdAt.toISOString()} />
+            <li
+              key={item.id}
+              className={`${styles.todoItem} ${item.completed ? styles.completed : ''} ${item.important ? styles.important : ''}`}
+            >
+              <span onClick={() => this.toggleComplete(item.id)}>{item.text}</span>
+              <button onClick={() => this.toggleImportant(item.id)}>Important</button>
               <button onClick={() => this.deleteTodo(Number(item.id))}>Delete</button>
             </li>
           ))}
